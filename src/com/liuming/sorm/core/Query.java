@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * 负责查询 - 对外提供服务的核心类
  *
- * @author liu ming
+ * @author liuming
  */
 public interface Query {
     /**
@@ -37,7 +37,7 @@ public interface Query {
      * @param clazz 表对应类
      * @param id    主键
      */
-    void delete(Class clazz, int id);
+    void delete(Class clazz, Object id);
 
     /**
      * 更新对象对应的记录

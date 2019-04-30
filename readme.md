@@ -23,6 +23,20 @@ create table dept(
 );
 
 insert into dept (address, dname) values ("郭守敬路498号", "浦东软件园");
+
+drop table emp;
+create table emp
+(
+    id       int(10) not null primary key auto_increment,
+    emplname varchar(20) default null,
+    salary   double      default 0,
+    birthday date,
+    age      int(11)     default 0,
+    depid    int(10) not null
+);
+
+show databases ;
+show tables ;
 ```
 
 最后,感谢北京尚学堂高淇老师的视频

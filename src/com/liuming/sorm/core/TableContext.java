@@ -2,6 +2,8 @@ package com.liuming.sorm.core;
 
 import com.liuming.sorm.bean.ColumnInfo;
 import com.liuming.sorm.bean.TableInfo;
+import com.liuming.sorm.utils.JavaFileUtils;
+import com.liuming.sorm.utils.StringUtils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -57,25 +59,59 @@ public class TableContext {
                 }
 
                 ResultSet keyset = dbmd.getPrimaryKeys(null, "%", tableName);
-//                while (keyset.next()) {
-//                    Object key = keyset.getObject("COLUMN_NAME");
-////                    String key = keyset.getString("COLUMN_NAME");
-//                    ColumnInfo keyColumn = tableInfo.getColumns().get(key);
-//                    keyColumn.setKeyType(1); //设置主键
-//                    tableInfo.getPriKeys().add(keyColumn);
-//                }
-//                if (tableInfo.getPriKeys().size() > 0){
-//                    //取唯一主键,方便使用
-//                    tableInfo.setOnlyPriKey(tableInfo.getPriKeys().get(0));
-//                }
+                while (keyset.next()) {
+                    Object key = keyset.getObject("COLUMN_NAME");
+//                    String key = keyset.getString("COLUMN_NAME");
+                    ColumnInfo keyColumn = tableInfo.getColumns().get(key);
+                    keyColumn.setKeyType(1); //设置主键
+                    tableInfo.getPriKeys().add(keyColumn);
+                }
+                if (tableInfo.getPriKeys().size() > 0) {
+                    //取唯一主键,方便使用
+                    tableInfo.setOnlyPriKey(tableInfo.getPriKeys().get(0));
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        //更新类结构
+        updateJavaPOFile();
+
+        //加载po包下面所有的类,便于重用,提高效率
+        loadPOTables();
+    }
+
+    /**
+     * 更新持久化对象
+     */
+    public static void updateJavaPOFile() {
+        Map<String, TableInfo> tables = TableContext.tableInfoMap;
+
+        for (TableInfo t : tables.values()) {
+            JavaFileUtils.createJavaPOFile(t, new MySqlTypeConvertor());
+            System.out.println("生成表{" + t.getTname() + "}对象对应的java bean");
+        }
+
+    }
+
+    /**
+     * 加载po包下的类
+     */
+    public static void loadPOTables() {
+        Class clazz = null;
+        for (TableInfo t : tableInfoMap.values()) {
+            try {
+                clazz = Class.forName(DBManager.getConf().getPoPackage() + "." +
+                        StringUtils.firstChar2UpperCase(t.getTname()));
+                classTableInfoMap.put(clazz, t);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) {
-        Map<String, TableInfo> tables = TableContext.tableInfoMap;
-        System.out.println(tables);
+        updateJavaPOFile();
     }
 }

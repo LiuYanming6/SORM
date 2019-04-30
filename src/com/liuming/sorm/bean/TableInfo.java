@@ -1,7 +1,5 @@
 package com.liuming.sorm.bean;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +21,10 @@ public class TableInfo {
      * 唯一主键
      */
     private ColumnInfo onlyPriKey;
+    /**
+     * 联合主键
+     */
+    private List<ColumnInfo> priKeys;
 
     public List<ColumnInfo> getPriKeys() {
         return priKeys;
@@ -31,8 +33,6 @@ public class TableInfo {
     public void setPriKeys(List<ColumnInfo> priKeys) {
         this.priKeys = priKeys;
     }
-
-    private List<ColumnInfo> priKeys; //联合主键
 
     public TableInfo() {
     }

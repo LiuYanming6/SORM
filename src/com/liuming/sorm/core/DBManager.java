@@ -36,7 +36,7 @@ public class DBManager {
     public static Connection getConnection() {
         try {
             System.out.println(configuration);
-//            Class.forName(configuration.getDriver()); not need
+//            Class.forName(configuration.getDriver());no move need
             return DriverManager.getConnection(
                     configuration.getUrl(),
                     configuration.getUser(),
@@ -77,5 +77,9 @@ public class DBManager {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static Configuration getConf() {
+        return configuration;
     }
 }
